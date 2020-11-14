@@ -1,0 +1,6 @@
+node_modules
+.env
+.vscode
+_td_database
+_td_file
+package-lock.json
