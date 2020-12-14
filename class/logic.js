@@ -72,7 +72,12 @@ class Logic {
                 if(!low.isSale && !high.isSale){
                     requestGold = Math.min(low.remaining, high.remaining)
                 }
+                if(requestGold < configs.min_request || requestGold > configs.max_request)
+                    requestGold = configs.min_request
+                    
                 //console.log('Request', requestGold)
+                if(low.chatId==high.chatId)
+                    return false;
 
                 if(await Logic.checkMessageId(client, low.messageId)){
                     Logic.replyTo(bot, low.chatId, String(requestGold), low.messageId)

@@ -31,6 +31,8 @@ class Configs {
             max_price_diff: 999999999,
             min_sale_price_diff: 1,
             max_sale_price_diff: 999999999,
+            min_request : 1,
+            max_request : 999999999,
             enable_main_bot: false,
             firstGroupChatId: -1001437213215,
             secondGroupChatId: -1001437213215,
@@ -47,6 +49,10 @@ class Configs {
                     configs.thirdGroupChatId = data.mvalue;
                 }else if(data.mkey == 'arbitrage_enable') {
                     configs.enable_main_bot = (data.mvalue=='true');
+                }else if(data.mkey == 'arbitrage_min_request') {
+                    configs.min_request = parseInt(data.mvalue, 10);
+                }else if(data.mkey == 'arbitrage_max_request') {
+                    configs.max_request = parseInt(data.mvalue, 10);
                 }
             }
         } catch(e) {
