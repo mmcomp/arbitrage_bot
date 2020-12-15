@@ -53,6 +53,10 @@ class Configs {
                     configs.min_request = parseInt(data.mvalue, 10);
                 }else if(data.mkey == 'arbitrage_max_request') {
                     configs.max_request = parseInt(data.mvalue, 10);
+                }else if(data.mkey == 'arbitrage_min_price_diff') {
+                    configs.min_price_diff = parseInt(data.mvalue, 10);
+                }else if(data.mkey == 'arbitrage_max_price_diff') {
+                    configs.max_price_diff = parseInt(data.mvalue, 10);
                 }
             }
         } catch(e) {
