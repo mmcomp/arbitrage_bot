@@ -52,11 +52,11 @@ class MessageClass {
                     tmpName += rawSplitMessage[i-1]
                 }
             }
-            if(rawMessage.indexOf('لغو شد') > 0){
+            if(rawMessage.indexOf('لغو شد') > 0 || rawMessage.indexOf('منقضی') > 0){
                 client.del('user_' + this.type + '_' + this.name)
                 if(this.type=='sale'){
                     client.get('low', function(err, res){
-                        if(!err){
+                        if(!err && res){
                             if(res.name==this.name){
                                 client.del('low')
                             }
@@ -64,7 +64,7 @@ class MessageClass {
                     })
                 }else{
                     client.get('high', function(err, res){
-                        if(!err){
+                        if(!err && res){
                             if(res.name==this.name){
                                 client.del('high')
                             }

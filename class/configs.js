@@ -8,23 +8,57 @@ class Configs {
             password: process.env.DB_PASS,
             database: process.env.DB_NAME
         });
+        this.connected = false;
+    }
+
+    async disconnect() {
+        if(this.connected) {
+            this.connected = false;
+            this.con.end();
+        }
+    }
+
+    async connect() {
+        if(!this.connected) {
+            var that = this;
+            return new Promise(function(resolve, reject) {
+                that.con.connect(function(err) {
+                    if (err) reject(err);
+                    // console.log("Connected!");
+                    that.connected = true;
+                    resolve(true);
+                });
+            });
+        }
     }
 
     async load() {
         var that = this;
         return new Promise(function(resolve, reject) {
-            that.con.connect(function(err) {
+            if(!that.connected) {
+                reject('disconnected!');
+            }
+            that.con.query('SELECT * FROM `configs`', function (err, result) {
                 if (err) reject(err);
-                // console.log("Connected!");
-                that.con.query('SELECT * FROM `configs`', function (err, result) {
-                  if (err) reject(err);
-                //   console.log("Result: " + result);
-                  resolve(result);
-                });
+                resolve(result);
             });
         });          
     }
 
+    async add(data) {
+        var that = this;
+        return new Promise(function(resolve, reject) {
+            if(!that.connected) {
+                reject('disconnected!');
+            }
+            const addClause = `'${data.userId}', '${data.messageId}', '${data.chatId}', '${data.color}', '${data.remaining}', '${data.isSale}', '${data.type}', '${data.name}'`;
+            that.con.query('INSERT INTO `requests` (`userId`, `messageId`, `chatId`, `color`, `remaining`, `isSale`, `type`, `name`) VALUES (' + addClause + ')', function (err, result) {
+                if (err) reject(err);
+                resolve(result);
+            });
+        }); 
+    }
+    
     async getConfigs() {
         let configs = {
             min_price_diff: 1,

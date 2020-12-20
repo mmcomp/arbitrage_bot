@@ -1,4 +1,8 @@
+const httpBuildQuery = require('http-build-query');
+const axios = require('axios');
+
 class Logic {
+    static addRequest;
     static async getValue(client, key) {
         // console.log('getting value of ', key)
         return new Promise(function (resolve, reject) {
@@ -72,15 +76,40 @@ class Logic {
                 if(!low.isSale && !high.isSale){
                     requestGold = Math.min(low.remaining, high.remaining)
                 }
-                if(requestGold < configs.min_request || requestGold > configs.max_request)
-                    requestGold = configs.min_request
-                    
+
+                if(requestGold > configs.max_request)
+                    requestGold = configs.max_request
+                
                 //console.log('Request', requestGold)
                 if(low.chatId==high.chatId)
                     return false;
 
+                // Logic.sendTelegramMsg(`Start Sending Request to these :
+                // Amount : ${requestGold}
+                // -------------------------
+                // ${JSON.stringify(low)}
+                // _________________________
+                // ${JSON.stringify(high)}
+                // `);
+                let chats = {
+                    "-1001368824505": "آبشده 100 گرمی لئونارد",
+                    "-1001437213215": "leonard test",
+                    "-1001396694333": "GRP1",
+                    "-1001457530474": "10 گرمی جهان گلد",
+                    "-1001187161379": "10 گرمی لیان",
+                    "-1001312112561": "زروان"
+                };
+                try{
+                    chats = JSON.parse(process.env.CHATS);
+                }catch(e) {}
+
                 if(await Logic.checkMessageId(client, low.messageId)){
                     Logic.replyTo(bot, low.chatId, String(requestGold), low.messageId)
+                    Logic.sendTelegramMsg(`${low.name} \n ${requestGold} : ${low.price} \n Group : ${(chats[low.chatId])?chats[low.chatId]:low.chatId}`);
+                    Logic.addRequest(low).then().catch(e => {
+                        console.log('add request for low error', low);
+                        console.error(e);
+                    })
                 }else{
                     //console.log('Low reply Failed!')
                     return false
@@ -88,6 +117,11 @@ class Logic {
                 
                 if(await Logic.checkMessageId(client, high.messageId)){
                     Logic.replyTo(bot, high.chatId, String(requestGold), high.messageId)
+                    Logic.sendTelegramMsg(`${high.name} \n ${requestGold} : ${high.price} \n Group : ${(chats[high.chatId])?chats[high.chatId]:high.chatId}`);
+                    Logic.addRequest(high).then().catch(e => {
+                        console.log('add request for high error', high);
+                        console.error(e);
+                    })
                 }else{
                     //console.log('High reply Failed!', 'low_hazard-' + low.name, JSON.stringify(low))
                     client.set('low_hazard-' + low.name, JSON.stringify(low))
@@ -159,7 +193,7 @@ class Logic {
 
                 for (const key of keys) {
                     const value = await Logic.getValue(client, key)
-                    if(messageId==value.messageId){
+                    if(value.messageId && messageId==value.messageId){
                         return resolve(true);
                     }
                 }
@@ -167,6 +201,22 @@ class Logic {
                 resolve(false);
             })
         });
+    }
+
+    static async sendTelegramMsg(text){
+        const token = process.env.BOT_TOKEN;
+        const chat_id = process.env.CHANNEL_ID;
+        let url = `https://api.telegram.org/bot${token}/sendMessage?`;
+        var obj = {
+            text,
+            chat_id,
+            reply_to_message_id:null,
+            disable_notification: true,
+            disable_web_page_preview:null,
+            parse_mode:null
+          };
+        url += httpBuildQuery(obj);
+        await axios.get(url);
     }
 }
 
