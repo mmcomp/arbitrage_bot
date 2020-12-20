@@ -1,0 +1,24 @@
+# TDLIB
+TDLIB_PATH='/home/jahangold/td/tdlib/lib/libtdjson.so'
+API_ID=1732823
+API_HASH='4aedc777ddbc97e75ef7d76ed0279439'
+DATABASE_DIRECTORY='_td_database'
+FILE_DIRECTORY='_td_files'
+
+# DB
+DB_HOST=localhost
+DB_NAME=leonard
+DB_USER=root
+DB_PASS=Hscomp2002@
+
+# REPORT
+BOT_TOKEN="1408815453:AAHSwyMTZmZ_wRqm32dgIbd2IzL3hgJTvOs"
+CHANNEL_ID=-1001450966379
+CHATS='{
+"-1001368824505":"آبشده 100 گرمی لئونارد",
+"-1001437213215":"leonard test",
+"-1001396694333":"GRP1",
+"-1001457530474":"10 گرمی جهان گلد",
+"-1001187161379":"10 گرمی لیان",
+"-1001312112561":"زروان"
+}'
